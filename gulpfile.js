@@ -134,7 +134,7 @@ const buildStyles = (mode) => (done) => {
     autoprefixer(autoprefixConfig),
     postcssUncss({ html: [distPath('html')] }),
   ];
-  
+
   ['development', 'production'].includes(mode) ? pump([
     gulp.src(srcPath('scss')),
     gulpSourcemaps.init({ loadMaps: true }),
@@ -208,10 +208,12 @@ const genericTask = (mode, context = 'building') => {
     browserSync.init({ port, server: distPath('html', true) });
 
     // Watch - Markup
-    gulp.watch(srcPath('html'), true)
-      .on('all', gulp.series(
+    gulp.watch(srcPath("html"), true).on(
+      "all",
+      gulp.series(
         Object.assign(cleanMarkup(mode), { displayName: `Watching Markup Task: Clean - ${modeName}` }),
         Object.assign(buildMarkup(mode), { displayName: `Watching Markup Task: Build - ${modeName}` }),
+        browserSync.reload
       ), browserSync.reload);
     done();
 
@@ -236,7 +238,7 @@ const genericTask = (mode, context = 'building') => {
         Object.assign(buildScripts(mode), { displayName: `Watching Scripts Task: Build - ${modeName}` }),
       ), browserSync.reload);
   };
-  
+
   // Exporting Zip
   const exportingZip = (done) => {
     pump([
@@ -253,11 +255,11 @@ const genericTask = (mode, context = 'building') => {
       Object.assign(browserLoadingWatching, { displayName: `Browser Loading & Watching Task - ${modeName}` }),
     ];
   }
-  
+
   // Returning Tasks based on Exporting Context 
   if (context === 'exporting') {
     return [
-      cleanExport(mode), 
+      cleanExport(mode),
       ...allBootingTasks,
       Object.assign(exportingZip, { displayName: `Exporting Zip Task - ${modeName}` }),
     ];
